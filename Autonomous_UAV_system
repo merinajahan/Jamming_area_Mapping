@@ -1,0 +1,67 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.spatial import Voronoi, voronoi_plot_2d
+
+# Constants
+GRID_SIZE = 100  # Size of the simulation area
+NUM_UAVS = 10  # Number of UAVs in the network
+
+# Jamming area parameters
+JAMMING_RADIUS = 20  # Radius of the jamming area
+JAMMING_STRENGTH = -90  # Signal strength within the jamming area
+
+
+# UAV class
+class UAV:
+    def __init__(self, id):
+        self.id = id
+        self.x = np.random.uniform(0, GRID_SIZE)
+        self.y = np.random.uniform(0, GRID_SIZE)
+        self.signal_strength = 0
+
+    def move(self):
+        self.x += np.random.uniform(-1, 1)
+        self.y += np.random.uniform(-1, 1)
+        self.x = np.clip(self.x, 0, GRID_SIZE)
+        self.y = np.clip(self.y, 0, GRID_SIZE)
+
+    def detect_jamming(self, jamming_area):
+        distance = np.sqrt((self.x - jamming_area[0]) ** 2 + (self.y - jamming_area[1]) ** 2)
+        if distance <= JAMMING_RADIUS:
+            self.signal_strength = JAMMING_STRENGTH
+        else:
+            self.signal_strength = 0
+
+
+# Simulation
+uavs = [UAV(i) for i in range(NUM_UAVS)]
+jamming_area = (GRID_SIZE / 2, GRID_SIZE / 2)  # Center of the jamming area
+
+# Move UAVs and detect jamming signals
+for t in range(100):
+    for uav in uavs:
+        uav.move()
+        uav.detect_jamming(jamming_area)
+
+# Extract UAV positions
+positions = np.array([(uav.x, uav.y) for uav in uavs])
+
+# Compute Voronoi diagram
+vor = Voronoi(positions)
+
+# Generate jamming area boundary from Voronoi vertices
+boundary_points = []
+for ridge in vor.ridge_vertices:
+    if -1 not in ridge:
+        boundary_points.append(vor.vertices[ridge])
+
+# Plot jamming area boundary using Voronoi diagram
+plt.figure(figsize=(5, 5))
+plt.xlim(0, GRID_SIZE)
+plt.ylim(0, GRID_SIZE)
+plt.scatter(positions[:, 0], positions[:, 1], color='b', label='UAVs')
+for boundary in boundary_points:
+    plt.plot(boundary[:, 0], boundary[:, 1], color='r', linestyle='--', linewidth=0.8)
+plt.legend()
+plt.title('Jamming Area Boundary')
+plt.show()
