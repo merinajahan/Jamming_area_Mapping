@@ -1,0 +1,78 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+
+
+def jamming_area_mapping(simulation_area, jamming_centers, jamming_radius):
+    # Create a grid of points representing the simulation area
+    x = np.arange(0, simulation_area[0])
+    y = np.arange(0, simulation_area[1])
+    xx, yy = np.meshgrid(x, y)
+
+    # Initialize the jamming area map
+    jamming_map = np.zeros_like(xx, dtype=bool)
+
+    # Iterate over jamming centers and mark the jamming area
+    for center in jamming_centers:
+        # Calculate the distance from each point to the jamming center
+        distance = np.sqrt((xx - center[0]) ** 2 + (yy - center[1]) ** 2)
+
+        # Mark points within the jamming radius as jammed
+        jamming_map = np.logical_or(jamming_map, distance <= jamming_radius)
+
+    return jamming_map
+
+
+# Define the simulation area size
+simulation_area = (100, 100)
+
+# Define jamming centers and radius
+jamming_centers = [(50, 50)]
+
+# Define jamming radius
+jamming_radius = 20
+
+# Generate the jamming area map
+jamming_map = jamming_area_mapping(simulation_area, jamming_centers, jamming_radius)
+
+# Define the UAV circle
+uav_radius = 10
+
+# Create a figure and axes
+fig, ax = plt.subplots()
+
+# Plot the initial jamming area map
+jamming_plot = ax.imshow(jamming_map, origin='lower', extent=[0, simulation_area[0], 0, simulation_area[1]],
+                         cmap='gray')
+
+# Plot the UAV circle (initially at the center)
+uav_circle = plt.Circle((simulation_area[0] / 2, simulation_area[1] / 2), uav_radius, fill=False, color='r')
+ax.add_patch(uav_circle)
+
+
+# Animation update function
+def update(frame):
+    # Calculate new UAV center coordinates based on the frame number
+    angle = frame * np.pi / 50
+    uav_center = (simulation_area[0] / 2 + 30 * np.cos(angle), simulation_area[1] / 2 + 30 * np.sin(angle))
+
+    # Update UAV circle position
+    uav_circle.center = uav_center
+
+    # Redraw the UAV circle
+    fig.canvas.draw()
+
+    return uav_circle,
+
+
+# Create the animation
+animation = FuncAnimation(fig, update, frames=100, interval=100)
+
+# Show the plot
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Jamming Area Map with Moving UAV')
+plt.colorbar(jamming_plot, label='Jammed')
+plt.grid(True, linestyle='--', alpha=0.5)
+plt.axis('equal')
+plt.show()
