@@ -1,0 +1,50 @@
+import matplotlib.pyplot as plt
+
+def find_boundary_rectangle(top_left, width, height):
+    boundary_points = []
+
+    # Calculate the coordinates of the four corners
+    top_right = (top_left[0] + width, top_left[1])
+    bottom_right = (top_left[0] + width, top_left[1] - height)
+    bottom_left = (top_left[0], top_left[1] - height)
+
+    # Generate boundary points along each side of the rectangle
+    boundary_points.extend(generate_line_points(top_left, top_right))
+    boundary_points.extend(generate_line_points(top_right, bottom_right))
+    boundary_points.extend(generate_line_points(bottom_right, bottom_left))
+    boundary_points.extend(generate_line_points(bottom_left, top_left))
+
+    return boundary_points
+
+def generate_line_points(start, end):
+    line_points = []
+
+    # Calculate the number of points to generate along the line
+    num_points = max(abs(end[0] - start[0]), abs(end[1] - start[1]))
+
+    # Generate points along the line using linear interpolation
+    for i in range(num_points + 1):
+        t = i / num_points
+        x = start[0] + (end[0] - start[0]) * t
+        y = start[1] + (end[1] - start[1]) * t
+        line_points.append((x, y))
+
+    return line_points
+
+
+# Example usage
+top_left = (0, 0)
+width = 8
+height = 6
+boundary_points = find_boundary_rectangle(top_left, width, height)
+
+# Visualize the jamming area boundary
+x_coords, y_coords = zip(*boundary_points)
+
+plt.plot(x_coords, y_coords, color='red', label='Boundary')
+plt.legend()
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Jamming Area Boundary')
+plt.grid(True)
+plt.show()
