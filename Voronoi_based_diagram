@@ -1,0 +1,35 @@
+import numpy as np
+from scipy.spatial import Voronoi, voronoi_plot_2d
+import matplotlib.pyplot as plt
+
+def find_boundary_voronoi(points):
+    vor = Voronoi(points)
+
+
+    boundary_vertices = []
+    for ridge in vor.ridge_vertices:
+        if -1 in ridge:
+            continue
+        boundary_vertices.extend(vor.vertices[ridge])
+
+
+    boundary_vertices = list(set(boundary_vertices))
+
+    return boundary_vertices
+
+# Example usage
+points = np.array([(1, 2), (2, 2), (3, 2), (2, 3), (2, 4), (3, 4), (4, 4), (4, 3)])
+boundary_vertices = find_boundary_voronoi(points)
+
+# Visualize the Voronoi diagram and boundary
+vor = Voronoi(points)
+voronoi_plot_2d(vor, show_points=False, show_vertices=False)
+plt.plot(points[:, 0], points[:, 1], 'bo', label='Points')
+plt.plot(vor.vertices[:, 0], vor.vertices[:, 1], 'r.', label='Voronoi Vertices')
+plt.plot([v[0] for v in boundary_vertices], [v[1] for v in boundary_vertices], 'g-', label='Boundary')
+plt.legend()
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Voronoi Diagram with Boundary')
+plt.grid(True)
+plt.show()
