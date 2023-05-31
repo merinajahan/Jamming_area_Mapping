@@ -1,0 +1,40 @@
+import matplotlib.pyplot as plt
+
+def find_boundary_shape(points):
+    # Find the minimum and maximum x and y coordinates
+    min_x = min(points, key=lambda p: p[0])[0]
+    max_x = max(points, key=lambda p: p[0])[0]
+    min_y = min(points, key=lambda p: p[1])[1]
+    max_y = max(points, key=lambda p: p[1])[1]
+
+    # Create a list to store the boundary points
+    boundary_points = []
+
+    # Iterate through each coordinate within the boundary
+    for x in range(min_x, max_x + 1):
+        for y in range(min_y, max_y + 1):
+            # Check if the coordinate is part of the boundary
+            if (x, y) not in points:
+                # Check if any of the neighboring points are part of the shape
+                if (x-1, y) in points or (x+1, y) in points or (x, y-1) in points or (x, y+1) in points:
+                    boundary_points.append((x, y))
+
+    return boundary_points
+
+
+# Example usage
+points = [(1, 2), (2, 2), (3, 2), (2, 3), (2, 4), (3, 4), (4, 4), (4, 3)]
+boundary_points = find_boundary_shape(points)
+
+# Visualize the points and the boundary shape
+x_coords, y_coords = zip(*points)
+boundary_x, boundary_y = zip(*boundary_points)
+
+plt.scatter(x_coords, y_coords, color='blue', label='Points')
+plt.plot(boundary_x, boundary_y, color='red', label='Boundary Shape')
+plt.legend()
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Boundary Shape of Points')
+plt.grid(True)
+plt.show()
