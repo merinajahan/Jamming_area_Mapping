@@ -1,0 +1,31 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define the area and grid parameters
+area_width = 100  # Width of the area (in meters)
+area_height = 100  # Height of the area (in meters)
+grid_size = 1  # Size of each grid cell (in meters)
+
+# Create a grid based on the area dimensions and grid size
+num_cells_x = int(area_width / grid_size)
+num_cells_y = int(area_height / grid_size)
+grid = np.zeros((num_cells_x, num_cells_y))
+
+# Generate random jamming locations
+num_jammers = 10  # Number of jammers
+jammer_positions_x = np.random.uniform(low=0, high=area_width, size=num_jammers)
+jammer_positions_y = np.random.uniform(low=0, high=area_height, size=num_jammers)
+
+# Update the grid with jamming signals
+for i in range(num_jammers):
+    cell_x = int(jammer_positions_x[i] / grid_size)
+    cell_y = int(jammer_positions_y[i] / grid_size)
+    grid[cell_x, cell_y] = 1
+
+# Plotting the jamming area map
+fig, ax = plt.subplots()
+ax.imshow(grid.T, origin='lower', cmap='Blues', extent=[0, area_width, 0, area_height])
+ax.set_xlabel('X position (m)')
+ax.set_ylabel('Y position (m)')
+ax.set_title('Jamming Area Map')
+plt.show()
