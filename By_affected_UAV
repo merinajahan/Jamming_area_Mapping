@@ -1,0 +1,76 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def identify_jamming_signal():
+
+    jamming_source_location = (10, 10)
+    jamming_signal_strength = 5
+    return jamming_source_location, jamming_signal_strength
+
+# Step 2: Plot the jamming boundary
+def plot_jamming_boundary(jamming_source_location, jamming_signal_strength):
+    boundary_radius = jamming_signal_strength * 2  # Example boundary radius calculation
+    boundary_center = jamming_source_location
+    theta = np.linspace(0, 2 * np.pi, 100)
+    boundary_x = boundary_center[0] + boundary_radius * np.cos(theta)
+    boundary_y = boundary_center[1] + boundary_radius * np.sin(theta)
+    plt.plot(boundary_x, boundary_y, 'r-', label='Jamming Boundary')
+    plt.scatter(jamming_source_location[0], jamming_source_location[1], c='r', marker='x', label='Jamming Source')
+    plt.legend()
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.title('Jamming Boundary')
+    plt.axis('equal')
+    plt.show()
+
+# Step 3: Establish communication
+def establish_communication():
+    # Simulated function to establish communication
+    print("Communication established.")
+
+# Step 4: Navigation adjustments
+def adjust_navigation(uav_location, jamming_source_location, jamming_signal_strength):
+    if np.linalg.norm(uav_location - jamming_source_location) < jamming_signal_strength:
+        print("UAV inside jamming area. Adjusting navigation.")
+        # Simulated function to adjust UAV's navigation to move away from the jamming area
+        new_uav_location = uav_location + np.array([1, 1])  # Example adjustment
+        return new_uav_location
+    else:
+        return uav_location
+
+# Step 5: Continuous monitoring
+def continuous_monitoring(uav_location, jamming_source_location, jamming_signal_strength):
+    if np.linalg.norm(uav_location - jamming_source_location) < jamming_signal_strength:
+        print("UAV reentered jamming area. Taking evasive maneuvers.")
+
+
+# Main simulation loop
+def simulate_uav_navigation():
+    # Initial UAV location
+    uav_location = np.array([0, 0])  # Example initial location
+
+    # Step 1: Identify the jamming signal
+    jamming_source_location, jamming_signal_strength = identify_jamming_signal()
+
+    # Step 2: Plot the jamming boundary
+    plot_jamming_boundary(jamming_source_location, jamming_signal_strength)
+
+    # Step 3: Establish communication
+    establish_communication()
+
+    # Simulation iterations
+    num_iterations = 10
+    for i in range(num_iterations):
+        # Step 4: Navigation adjustments
+        uav_location = adjust_navigation(uav_location, jamming_source_location, jamming_signal_strength)
+
+        # Step 5: Continuous monitoring
+        continuous_monitoring(uav_location, jamming_source_location, jamming_signal_strength)
+
+        # Update UAV location (for simulation purposes)
+        uav_location += np.array([1, 1])  # Example UAV movement
+
+        print("UAV Location:", uav_location)
+
+# Run the simulation
+simulate_uav_navigation()
