@@ -1,0 +1,43 @@
+import random
+
+def is_jamming_affected():
+    # Simulate the detection of jamming signals
+    return random.choice([True, False])
+
+def generate_exit_path():
+    # Generate a random path for the UAV to exit the area
+    path = []
+    for _ in range(10):  # Generate a path of 10 steps
+        direction = random.choice(['up', 'down', 'left', 'right'])
+        path.append(direction)
+    return path
+
+def move_uav(position, direction):
+    # Update the UAV's position based on the given direction
+    if direction == 'up':
+        position[1] += 1
+    elif direction == 'down':
+        position[1] -= 1
+    elif direction == 'left':
+        position[0] -= 1
+    elif direction == 'right':
+        position[0] += 1
+
+# Initialize the UAV's position inside the area
+uav_position = [0, 0]
+
+while True:
+    # Check if the UAV is affected by jamming signals
+    jamming_affected = is_jamming_affected()
+
+    if not jamming_affected:
+        print("UAV successfully exited the area.")
+        break
+
+    # Generate an exit path for the UAV
+    exit_path = generate_exit_path()
+
+    # Simulate the UAV's movement along the generated path
+    for direction in exit_path:
+        move_uav(uav_position, direction)
+        print(f"UAV moved to position {uav_position}")
