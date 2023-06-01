@@ -9,3 +9,8 @@ If the UAV is affected by jamming, find a safe exit route.
 Generate a path for the UAV to exit the area.
 Simulate the UAV's movement along the generated path.
 Repeat steps 2-6 until the UAV successfully exits the area.
+
+
+
+This code will simulate the UAV's attempt to exit the area while being affected by jamming signals.
+It will generate a random path for the UAV and move it along that path until the UAV successfully exits the area or the jamming signals persist.
