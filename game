@@ -1,0 +1,107 @@
+import pygame
+import random
+
+# Initialize Pygame
+pygame.init()
+
+# Constants
+WIDTH, HEIGHT = 800, 600
+CAR_WIDTH, CAR_HEIGHT = 60, 100
+ROAD_WIDTH = 400
+FPS = 60
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
+# Create the screen
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Car Game")
+
+# Load car image
+car_image = pygame.image.load("car.png")
+car_image = pygame.transform.scale(car_image, (CAR_WIDTH, CAR_HEIGHT))
+
+# Load obstacle image
+obstacle_image = pygame.image.load("obstacle.png")
+obstacle_image = pygame.transform.scale(obstacle_image, (50, 50))
+
+# Initialize car position
+car_x = WIDTH // 2 - CAR_WIDTH // 2
+car_y = HEIGHT - CAR_HEIGHT - 20
+car_speed = 5
+
+# Initialize obstacles
+obstacles = []
+obstacle_speed = 5
+obstacle_spawn_timer = 0
+
+# Initialize score
+score = 0
+font = pygame.font.Font(None, 36)
+
+# Game loop
+clock = pygame.time.Clock()
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] and car_x > 0:
+        car_x -= car_speed
+    if keys[pygame.K_RIGHT] and car_x < WIDTH - CAR_WIDTH:
+        car_x += car_speed
+
+    # Spawn obstacles
+    obstacle_spawn_timer += 1
+    if obstacle_spawn_timer == 50:
+        obstacle_x = random.randint(0, WIDTH - 50)
+        obstacle_y = -50
+        obstacles.append([obstacle_x, obstacle_y])
+        obstacle_spawn_timer = 0
+
+    # Move obstacles
+    for obstacle in obstacles:
+        obstacle[1] += obstacle_speed
+
+    # Remove off-screen obstacles
+    obstacles = [obstacle for obstacle in obstacles if obstacle[1] < HEIGHT]
+
+    # Check for collisions
+    for obstacle in obstacles:
+        if (
+            car_x < obstacle[0] + 50
+            and car_x + CAR_WIDTH > obstacle[0]
+            and car_y < obstacle[1] + 50
+            and car_y + CAR_HEIGHT > obstacle[1]
+        ):
+            running = False
+
+    # Clear the screen
+    screen.fill(BLACK)
+
+    # Draw road
+    pygame.draw.rect(screen, WHITE, (WIDTH // 2 - ROAD_WIDTH // 2, 0, ROAD_WIDTH, HEIGHT))
+
+    # Draw car
+    screen.blit(car_image, (car_x, car_y))
+
+    # Draw obstacles
+    for obstacle in obstacles:
+        screen.blit(obstacle_image, (obstacle[0], obstacle[1]))
+
+    # Update score
+    score += 1
+    score_text = font.render(f"Score: {score}", True, WHITE)
+    screen.blit(score_text, (20, 20))
+
+    # Update the display
+    pygame.display.flip()
+
+    # Control frame rate
+    clock.tick(FPS)
+
+# Quit Pygame
+pygame.quit()
